@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
-
 /*
    
    The following template variables are used:
@@ -12,8 +10,8 @@
 
 */
 
-const char *index_html = "\
-<!DOCTYPE html>\
+const char *index_html = \
+"<!DOCTYPE html>\
 <html>\
     <head>\
         <title>%TITLE%</title>\
@@ -29,8 +27,8 @@ body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; col
     </body>\
 </html>";
 
-const char *setup_html = "\
-<!DOCTYPE html>\
+const char *setup_html = \
+"<!DOCTYPE html>\
 <html>\
     <head>\
         <title>%TITLE%</title>\
