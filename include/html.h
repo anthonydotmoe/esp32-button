@@ -28,16 +28,14 @@ const String footer_html = \
 </html>";
 
 const String index_html = header_html + \
-"<h1>Button Statistics</h1>\
-<p>Current web hook: %CONFIG_GET_URL%</p>\
+"<p>Current web hook: %CONFIG_GET_URL%</p>\
 <p>Is Pressed: %BUTTON_STATE%</p>\
 <button onclick=\"window.location.href='/config.html';\">Button setup</button>\
 <meta http-equiv=\"refresh\" content=\"30\"/>"\
 + footer_html;
 
 const String setup_html = header_html + \
-"<h1>Button Setup</h1>\
-<h2>WebHook settings</h2>\
+"<h2>WebHook settings</h2>\
 <p>\
     <form action=\"/get\">\
         <label for=\"WebHook\">URL:</label><br>\
