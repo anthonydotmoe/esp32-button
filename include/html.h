@@ -3,7 +3,6 @@
 /*
    
    The following template variables are used:
-   %TITLE%          Page title and h1 text
    %CONFIG_*%       Value from config file (replace * with value from config file)
    %BUTTON_STATE%   Current state of the button (useless?)
    %*_CHECKED%      If the value should be checked, replace with "checked", else empty string
@@ -14,12 +13,13 @@ const char *index_html = R"literal(
 <!DOCTYPE html>
 <html>
     <head>
-        <title>%TITLE%</title>
+        <title>Button Statistics</title>
         <style>
 body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; color: #000088; }
         </style>
     </head>
     <body>
+        <h1>Button Statistics</h1>
         <p>Current web hook: %CONFIG_GET_URL%</p>
         <p>Is Pressed: %BUTTON_STATE%</p>
         <button onclick="window.location.href='/config.html';">Button setup</button>
@@ -32,13 +32,13 @@ const char *setup_html = R"literal(
 <!DOCTYPE html>
 <html>
     <head>
-        <title>%TITLE%</title>
+        <title>Button Setup</title>
         <style>
 body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; color: #000088; }
         </style>
     </head>
     <body>
-        <h1>%TITLE%</h1>
+        <h1>Button Setup</h1>
         <h2>WebHook settings</h2>
         <p>
             <form action="/get">
@@ -72,3 +72,16 @@ body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; col
         </p>
     </body>
 </html>)literal";
+
+const char *not_found_html = R"literal(
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Not found</title>
+    </head>
+    <body>
+        <h1>Not found</h1>
+        <p>The requested URL was not found on this server</p>
+    </body>
+</html>
+)literal";
