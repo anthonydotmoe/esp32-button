@@ -51,10 +51,10 @@ body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; col
                 <input type="submit" value="Submit">
             </form>
         </p>
-        <br><br>
+        <br>
         <h2>WiFi Settings</h2>
         <p>
-            <form action"/get">
+            <form action="/get">
                 <label for="PSK">PSK</label>
                 <input type="radio" id="PSK" name="wifi_mode" value="0" %PSK_CHECKED%><br>
                 <label for="EAP">PEAP-MSCHAPv2</label>
@@ -67,6 +67,19 @@ body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; col
                 <input type="text" value="%CONFIG_EAP_USER%" id="eap_user" name="eap_user"><br>
                 <label for="eap_pass">EAP Password: </label>
                 <input type="password" id="eap_pass" name="eap_pass"><br>
+                <input type="submit" value="Submit">
+            </form>
+        </p>
+        <br>
+        <h2>Button Settings</h2>
+        <p>
+            <form action="/get">
+                <label for="button_pin">Button Pin: </label>
+                <input type="number" value="%CONFIG_BUTTON_PIN%" id="button_pin" name="button_pin"><br>
+                <label for="NO">Normally Open</label>
+                <input type="radio" id="NO" name="button_nonc" value="0" %NO_CHECKED%><br>
+                <label for="NC">Normally Closed</label>
+                <input type="radio" id="NC" name="button_nonc" value="1" %NC_CHECKED%><br>
                 <input type="submit" value="Submit">
             </form>
         </p>
