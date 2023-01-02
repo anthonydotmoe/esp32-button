@@ -61,11 +61,11 @@ body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; col
                 <input type="radio" id="EAP" name="wifi_mode" value="1" %EAP_CHECKED%><br>
                 <label for="wifi_ssid">SSID: </label>
                 <input type="text" value="%CONFIG_WIFI_SSID%" id="wifi_ssid" name="wifi_ssid"><br>
-                <label for="wifi_passwd">PSK Password: ></label>
+                <label for="wifi_passwd">PSK Password: </label>
                 <input type="password" id="wifi_passwd" name="wifi_passwd"><br>
-                <label for="eap_user">EAP Username: ></label>
+                <label for="eap_user">EAP Username: </label>
                 <input type="text" value="%CONFIG_EAP_USER%" id="eap_user" name="eap_user"><br>
-                <label for="eap_pass">EAP Password: ></label>
+                <label for="eap_pass">EAP Password: </label>
                 <input type="password" id="eap_pass" name="eap_pass"><br>
                 <input type="submit" value="Submit">
             </form>
