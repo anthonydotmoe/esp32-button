@@ -4,7 +4,6 @@
    
    The following template variables are used:
    %CONFIG_*%       Value from config file (replace * with value from config file)
-   %BUTTON_STATE%   Current state of the button (useless?)
    %*_CHECKED%      If the value should be checked, replace with "checked", else empty string
 
 */
@@ -17,13 +16,18 @@ const char *index_html = R"literal(
         <style>
 body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; color: #000088; }
         </style>
+        <script>
+            socket = new WebSocket("ws://" + location.host + "/ws");
+            socket.onmessage = function(e) {
+                document.getElementById("button_state").innerHTML = e.data;
+            };
+        </script>
     </head>
     <body>
         <h1>Button Statistics</h1>
         <p>Current web hook: %CONFIG_GET_URL%</p>
-        <p>Is Pressed: %BUTTON_STATE%</p>
+        <p>Is Pressed: <div id="button_state">No</div></p>
         <button onclick="window.location.href='/config.html';">Button setup</button>
-        <meta http-equiv="refresh" content="30"/>
     </body>
 </html>
 )literal";
@@ -34,7 +38,11 @@ const char *setup_html = R"literal(
     <head>
         <title>Button Setup</title>
         <style>
-body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; color: #000088; }
+body { 
+    background-color: #cccccc;
+    font-family: Arial, Helvetica, Sans-Serif;
+    color: #000088;
+}
         </style>
     </head>
     <body>
@@ -61,12 +69,16 @@ body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; col
                 <input type="radio" id="EAP" name="wifi_mode" value="1" %EAP_CHECKED%><br>
                 <label for="wifi_ssid">SSID: </label>
                 <input type="text" value="%CONFIG_WIFI_SSID%" id="wifi_ssid" name="wifi_ssid"><br>
-                <label for="wifi_passwd">PSK Password: </label>
-                <input type="password" id="wifi_passwd" name="wifi_passwd"><br>
-                <label for="eap_user">EAP Username: </label>
-                <input type="text" value="%CONFIG_EAP_USER%" id="eap_user" name="eap_user"><br>
-                <label for="eap_pass">EAP Password: </label>
-                <input type="password" id="eap_pass" name="eap_pass"><br>
+                <div class="psk_settings">
+                    <label for="wifi_passwd">PSK Password: </label>
+                    <input type="password" id="wifi_passwd" name="wifi_passwd"><br>
+                </div>
+                <div class="eap_settings">
+                    <label for="eap_user">EAP Username: </label>
+                    <input type="text" value="%CONFIG_EAP_USER%" id="eap_user" name="eap_user"><br>
+                    <label for="eap_pass">EAP Password: </label>
+                    <input type="password" id="eap_pass" name="eap_pass"><br>
+                </div>
                 <input type="submit" value="Submit">
             </form>
         </p>

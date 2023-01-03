@@ -1,13 +1,11 @@
 // Library Includes
 #include <Arduino.h>
+#include <M5Atom.h>
 #include <SPIFFS.h>
-//#include <WiFiAP.h>
 #include <ESPmDNS.h>
-//#include <DNSServer.h>
 #include <ESPAsyncWebServer.h>
-//#include <HTTPClient.h>
+#include <HTTPClient.h>
 #include <WiFiClientSecure.h>
-#include <Adafruit_NeoPixel.h>
 #include <ArduinoJson.h>
 
 // Local Includes
@@ -18,15 +16,17 @@
 #define FORMAT_SPIFFS_IF_FAILED true
 
 // Global Objects
-Adafruit_NeoPixel led(1, 27, NEO_GRB + NEO_KHZ400);
 AsyncWebServer web_server(80);
-//HTTPClient http_client;
-//DNSServer dns_server;
+AsyncWebSocket ws("/ws");
 ButtonConfig button_config;
+WiFiClientSecure client;
 
+// Global Variables
+
+// Global Constants
 const char *filename = "/config.json";
 
-void led_color(uint8_t r, uint8_t g, uint8_t b);
+// Function Prototypes
 bool load_config(ButtonConfig &config, const char *filename);
 bool save_config(const char *filename, const ButtonConfig &config);
 void print_config(const char *filename);
@@ -34,13 +34,11 @@ bool init_wifi();
 void init_webserver();
 
 void setup() {
-  Serial.begin(115200);
-  led_color(0, 0, 0);
+  M5.begin(true, false, false);
 
   // Init SPIFFS
   if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)) {
     log_e("SPIFFS mount failed!");
-    led_color(0, 255, 0);
     while(1);
   }
   log_i("SPIFFS initialized");
@@ -49,7 +47,6 @@ void setup() {
   if(load_config(button_config, filename) == false) {
     if(save_config(filename, button_config)) {
       log_e("Failed saving config!");
-      led_color(255, 0, 0);
       while(1);
     }
   }
@@ -58,28 +55,31 @@ void setup() {
   // Init WiFi
   if(!init_wifi()) {
     log_e("WiFi failed.");
-    led_color(100, 0, 0);
     while(1);
   }
   log_i("WiFi initialized");
   
+  // Init web server
   init_webserver();
+  
+  client.setInsecure();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
+  HTTPClient http;
+  int http_code;
 
-/// @brief Set the color of the LED
-/// @param r Red Brightness, 0 to 255.
-/// @param g Green Brightness, 0 to 255.
-/// @param b Blue Brightness, 0 to 255.
-void led_color(uint8_t r, uint8_t g, uint8_t b) {
-  led.setPixelColor(0, led.Color(r, g, b));
-  //led.setPixelColor(0, ((uint32_t)r << 16) | ((uint32_t)g << 8) | b);
-  led.show();
-  log_d("Set LED color to %d, %d, %d", r, g, b);
-  return;
+  M5.update();
+  if(M5.Btn.wasPressed()) {
+    log_i("Button was pressed");
+    ws.textAll("Yes");
+    http.begin(client, button_config.get_url);
+    http_code = http.GET();
+    http.end();
+    delay(2000);
+    ws.textAll("No");
+    ws.cleanupClients();
+  }
 }
 
 /// @brief Load configuration from SPIFFS file, or from default values
@@ -108,7 +108,6 @@ bool load_config(ButtonConfig &config, const char *filename) {
     return false;
   }
 
-  // Copy values from the JsonDocument or default values if document is empty
   strlcpy(config.wifi_ssid, doc["wifi_ssid"], sizeof(config.wifi_ssid));
   strlcpy(config.wifi_passwd, doc["wifi_passwd"], sizeof(config.wifi_passwd));
   config.wifi_mode = doc["wifi_mode"];
@@ -190,6 +189,7 @@ bool init_wifi() {
       log_w("Station failed to associate");
       WiFi.disconnect();
       WiFi.softAP("SETUP", NULL);
+      log_i("AP Mode Active; SSID: %s, IP: %s", WiFi.softAPSSID(), WiFi.softAPIP());
       break;
     }
   }
@@ -309,6 +309,8 @@ void init_webserver() {
   web_server.onNotFound([](AsyncWebServerRequest *r) {
     r->send_P(404, "text/html", not_found_html);
   });
+  
+  web_server.addHandler(&ws);
   
   web_server.begin();
 }
